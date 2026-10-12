@@ -1,8 +1,8 @@
 <div align="center">
 
-<img src="icons/icon128.png" alt="Logo do InstaNF" width="96" height="96">
+<img src="icons/icon128.png" alt="Logo da Mão Dupla" width="96" height="96">
 
-# InstaNF
+# Mão Dupla
 
 **Descubra quem não te segue de volta, acompanhe quem entrou e saiu, e organize seus follows e unfollows com segurança. Direto do seu navegador, sem servidor e sem senha.**
 
@@ -11,9 +11,11 @@
 ![Sem dependências](https://img.shields.io/badge/depend%C3%AAncias-zero-0b6e6a)
 ![Seus dados ficam no seu PC](https://img.shields.io/badge/dados-100%25%20locais-0b6e6a)
 
-<img src="docs/screenshot.png" alt="Tela do InstaNF mostrando a lista 'Não me seguem de volta' (contas fictícias)" width="860">
+<img src="docs/screenshot.png" alt="Tela da Mão Dupla mostrando a lista 'Não me seguem de volta' (contas fictícias)" width="860">
 
 <sub>Contas da imagem são fictícias.</sub>
+
+> **Por que "Mão Dupla"?** Como a rua com trânsito nos dois sentidos: aqui você vê quem você segue e quem te segue, e onde a via é de mão única.
 
 </div>
 
@@ -40,7 +42,7 @@
 
 ## O que é
 
-O InstaNF é uma extensão para navegadores baseados em Chromium (Chrome, Edge, Brave, Opera…) que lê a sua lista de **seguidores** e de **seguindo** no Instagram e mostra, de forma organizada:
+A **Mão Dupla** é uma extensão para navegadores baseados em Chromium (Chrome, Edge, Brave, Opera…) que lê a sua lista de **seguidores** e de **seguindo** no Instagram e mostra, de forma organizada:
 
 - quem você segue mas **não te segue de volta**;
 - quem te segue mas **você não segue**;
@@ -71,29 +73,29 @@ A extensão não está na Chrome Web Store. Ela é instalada em **modo desenvolv
 
 ### Opção A: baixar a versão pronta (recomendado)
 
-1. Abra a página de **Releases** deste repositório e baixe o arquivo `instanf-vX.Y.Z.zip` da versão mais recente.
-2. **Extraia** o zip. Vai aparecer uma pasta chamada `instanf`. Guarde-a num lugar fixo (não apague depois: o navegador usa a pasta, não uma cópia).
+1. Abra a página de **Releases** deste repositório e baixe o arquivo `mao-dupla-vX.Y.Z.zip` da versão mais recente.
+2. **Extraia** o zip. Vai aparecer uma pasta chamada `mao-dupla`. Guarde-a num lugar fixo (não apague depois: o navegador usa a pasta, não uma cópia).
 3. No navegador, abra `chrome://extensions` (no Edge: `edge://extensions`, no Brave: `brave://extensions`).
 4. Ligue o **Modo do desenvolvedor** (canto superior direito).
-5. Clique em **Carregar sem compactação** e selecione a pasta `instanf`.
-6. (Opcional) Clique no ícone de quebra-cabeça da barra do navegador e **fixe** o InstaNF para ter o ícone sempre à mão.
+5. Clique em **Carregar sem compactação** e selecione a pasta `mao-dupla`.
+6. (Opcional) Clique no ícone de quebra-cabeça da barra do navegador e **fixe** a Mão Dupla para ter o ícone sempre à mão.
 
 ### Opção B: a partir do código-fonte
 
 ```bash
-git clone <url-deste-repositorio>
+git clone https://github.com/fezarosa-dev/mao-dupla.git
 ```
 
 Depois siga os passos 3 a 5 acima, escolhendo a pasta clonada. Não há `npm install` nem etapa de build.
 
 ### Atualizando
 
-Baixe a nova release, extraia por cima da pasta antiga e, em `chrome://extensions`, clique no botão de **recarregar** (seta circular) do InstaNF. Seus dados continuam salvos.
+Baixe a nova release, extraia por cima da pasta antiga e, em `chrome://extensions`, clique no botão de **recarregar** (seta circular) da Mão Dupla. Seus dados continuam salvos.
 
 ## Como usar
 
 1. Abra o **instagram.com** em uma aba e **entre na sua conta** (a extensão trabalha na conta que estiver logada).
-2. Clique no ícone do **InstaNF**. Abre uma página própria da extensão.
+2. Clique no ícone da **Mão Dupla**. Abre uma página própria da extensão.
 3. Clique em **Carregar do Instagram**. As listas aparecem aos poucos, com barra de progresso. Contas grandes levam alguns minutos porque o carregamento é feito com pausas, para não incomodar o Instagram.
 4. Navegue pelas abas na barra lateral. Use a busca, a paginação e os botões de cada card.
 5. Da próxima vez que abrir, os dados salvos aparecem na hora. Clique em **Carregar do Instagram** quando quiser atualizar. É aí que as abas de **Mudanças** comparam com a atualização anterior.
@@ -164,7 +166,7 @@ O Instagram limita quantas ações uma conta pode fazer em pouco tempo. Passou d
 
 Os dados ficam salvos no próprio navegador. Se você trocar de computador ou limpar o cache, eles somem, a não ser que tenha exportado.
 
-- **Exportar zip** (barra lateral) baixa `instanf-AAAA-MM-DD.zip` com:
+- **Exportar zip** (barra lateral) baixa `mao-dupla-AAAA-MM-DD.zip` com:
   - `dados.json`: o estado completo (seguidores, seguindo, todas as comparações, histórico de unfollows, as duas filas, data da última atualização e itens por página);
   - um **CSV por aba** (`seguindo.csv`, `nao-me-seguem-de-volta.csv`, `novos-no-seguindo.csv`…), com usuário, nome, id, verificado, "você segue", "te segue" e data. Os CSVs abrem direto no Excel, com acentos corretos.
 - **Importar zip** lê o `dados.json` de um zip exportado, mostra um resumo e, depois da sua confirmação, **substitui** os dados atuais.
@@ -277,7 +279,7 @@ O workflow `.github/workflows/release.yml` empacota a extensão e publica a Rele
    git push origin v2.1.0
    ```
 
-3. O GitHub Actions confere se a tag bate com a versão do manifest, monta o `instanf-v2.1.0.zip` (com a pasta `instanf/` dentro) e cria a Release com o zip anexado e as notas geradas automaticamente.
+3. O GitHub Actions confere se a tag bate com a versão do manifest, monta o `mao-dupla-v2.1.0.zip` (com a pasta `mao-dupla/` dentro) e cria a Release com o zip anexado e as notas geradas automaticamente.
 
 Para só testar o empacotamento sem publicar, rode o workflow manualmente na aba **Actions** (*Run workflow*): o zip fica disponível como artefato.
 

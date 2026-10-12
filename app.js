@@ -117,7 +117,7 @@ function carregarFoto(u, img) {
   fotos.get(u.pk).then((url) => { img.src = url || u.pic; }); // sem blob, tenta o link direto
 }
 
-const KEY = "instanf";
+const KEY = "instanf"; // chave mantida do nome antigo para não perder dados já salvos
 const salvar = () => {
   try {
     localStorage.setItem(KEY, JSON.stringify({
@@ -609,7 +609,7 @@ function exportarZip() {
   arquivos["fila-follow.csv"] = csv(st.fila.follow.map((x) => x.u));
   const a = document.createElement("a");
   a.href = URL.createObjectURL(new Blob([zip(arquivos)], { type: "application/zip" }));
-  a.download = `instanf-${new Date().toISOString().slice(0, 10)}.zip`;
+  a.download = `mao-dupla-${new Date().toISOString().slice(0, 10)}.zip`;
   a.click();
   setTimeout(() => URL.revokeObjectURL(a.href), 5000);
   toast("Zip exportado.");

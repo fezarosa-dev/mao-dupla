@@ -5,6 +5,7 @@
 # Dados pessoais exportados pela extensão (seguidores, seguindo etc.) e pacotes gerados
 *.zip
 instanf-*.json
+mao-dupla-*.json
 dist/
 build/
 
