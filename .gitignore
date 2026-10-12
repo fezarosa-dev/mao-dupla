@@ -1,0 +1,15 @@
+# Markdown: só o README.md é versionado
+*.md
+!README.md
+
+# Dados pessoais exportados pela extensão (seguidores, seguindo etc.) e pacotes gerados
+*.zip
+instanf-*.json
+dist/
+build/
+
+# Ferramentas e sistema
+node_modules/
+.DS_Store
+.claude/
+.ccc/
