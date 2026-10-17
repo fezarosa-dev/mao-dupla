@@ -32,39 +32,46 @@ async function statusRel(pk) {
   } catch { return null; }
 }
 
-// acao: "follow" | "unfollow". Imita a requisição do próprio site (endpoint, corpo e headers da sessão).
+// acao: "follow" | "unfollow". Imita o site: ambos são mutations GraphQL (v1/friendships/create|destroy passaram a
+// devolver HTML). Tokens vêm da página aberta agora; nada é guardado entre execuções.
+// ponytail: doc_ids mudam quando o Instagram publica novo bundle; recapturar usePolarisFollow/UnfollowMutation se o erro voltar.
+// executeScript serializa só esta função: tudo que ela usa precisa estar dentro dela.
 async function chamarIG(pk, acao) {
-  const ck = (n) => document.cookie.match(new RegExp("(?:^|; )" + n + "=([^;]*)"))?.[1] || "";
-  let claim = "0";
-  try { claim = sessionStorage.getItem("www-claim-v2") || "0"; } catch {}
-  const headers = {
-    "X-IG-App-ID": "936619743392459",
-    "X-CSRFToken": ck("csrftoken"),
-    "X-Requested-With": "XMLHttpRequest",
-    "X-ASBD-ID": "129477",
-    "X-Instagram-AJAX": document.documentElement.innerHTML.match(/"rollout_hash":"(\w+)"/)?.[1] || "1",
-    "X-IG-WWW-Claim": claim,
-    "X-Web-Device-Id": ck("ig_did"),
-    "X-Mid": ck("mid"),
-    "Content-Type": "application/x-www-form-urlencoded",
+  const MUTATION = {
+    follow: { nome: "usePolarisFollowMutation", doc: "26508036048874888" },
+    unfollow: { nome: "usePolarisUnfollowMutation", doc: "27789106940691111" },
   };
-  const fo = acao === "follow";
-  const body = new URLSearchParams({ container_module: "profile", user_id: String(pk), ...(fo ? { include_follow_friction_check: "true" } : {}) }).toString();
-  const urls = fo
-    ? [`/api/v1/friendships/create/${pk}/`, `/api/v1/web/friendships/${pk}/follow/`]
-    : [`/api/v1/web/friendships/${pk}/unfollow/`, `/api/v1/friendships/destroy/${pk}/`];
-  const erros = [];
-  for (const url of urls) {
-    const r = await fetch(url, { method: "POST", credentials: "include", headers, body });
-    const t = await r.text();
-    let j = {};
-    try { j = JSON.parse(t); } catch {}
-    if (r.ok && j.status === "ok") return { ok: true, msg: "", pendente: fo && j.friendship_status ? j.friendship_status.following !== true : false };
-    // bloqueio por excesso de ações: parar na hora, sem tentar outro endpoint
-    if (r.status === 429 || t.includes("feedback_required")) return { ok: false, bloqueio: true, msg: "Instagram limitou as ações da conta (feedback_required)." };
-    erros.push(`${url.split("/").slice(2, 5).join("/")} → HTTP ${r.status} ${t.trimStart().startsWith("<") ? "(resposta HTML: endpoint recusado)" : t.slice(0, 120)}`);
+  const ck = (n) => document.cookie.match(new RegExp("(?:^|; )" + n + "=([^;]*)"))?.[1] || "";
+  const html = document.documentElement.innerHTML;
+  const tok = (nome) => html.match(new RegExp('"' + nome + '",\\[\\],\\{"token":"([^"]+)"'))?.[1] || "";
+  const lsd = tok("LSD"), dtsg = tok("DTSGInitialData");
+  if (!lsd || !dtsg) return { ok: false, msg: "Tokens do Instagram não encontrados na página; recarregue a aba do Instagram." };
+  const { nome, doc } = MUTATION[acao];
+  const body = new URLSearchParams({
+    av: ck("ds_user_id"), __a: "1", __user: "0", fb_dtsg: dtsg, lsd,
+    fb_api_caller_class: "RelayModern", fb_api_req_friendly_name: nome,
+    server_timestamps: "true", doc_id: doc,
+    variables: JSON.stringify({ target_user_id: String(pk), container_module: "profile", nav_chain: "PolarisProfilePostsTabRoot:profilePage:1:via_cold_start" }),
+  }).toString();
+  const r = await fetch("/api/graphql", {
+    method: "POST", credentials: "include",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded", "X-CSRFToken": ck("csrftoken"), "X-IG-App-ID": "936619743392459",
+      "X-FB-LSD": lsd, "X-ASBD-ID": "129477", "X-FB-Friendly-Name": nome,
+    },
+    body,
+  });
+  const t = await r.text();
+  let j = {};
+  try { j = JSON.parse(t.replace(/^for \(;;\);/, "")); } catch {}
+  // bloqueio por excesso de ações: parar na hora
+  if (r.status === 429 || /feedback_required|rate_limit/i.test(t)) return { ok: false, bloqueio: true, msg: "Instagram limitou as ações da conta (feedback_required)." };
+  const st = j.data && Object.values(j.data)[0];
+  if (r.ok && st && !j.errors) {
+    const f = st.friendship_status;
+    return { ok: true, msg: "", pendente: acao === "follow" && !!f && f.following !== true && !!f.outgoing_request };
   }
-  return { ok: false, msg: erros.join(" | ") };
+  return { ok: false, msg: `graphql → HTTP ${r.status} ${t.trimStart().startsWith("<") ? "(resposta HTML)" : t.slice(0, 160)}` };
 }
 
 // ---- Interface ----
