@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Mão Dupla",
   "short_name": "Mão Dupla",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Veja quem não te segue de volta no Instagram, acompanhe quem entrou e saiu e organize follows e unfollows com segurança.",
   "author": "Felipe Zanoni da Rosa",
   "homepage_url": "https://github.com/fezarosa-dev/mao-dupla",
